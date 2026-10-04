@@ -53,20 +53,21 @@ Deno.serve(async (req) => {
           attributes: {
             checkout_options: { embed: false },
           checkout_data: {
-            custom: {
-              product: "little-date-invitation",
-              slug: normalized.slug,
-              mode: normalized.mode,
-              sender: normalized.sender,
-              recipient: normalized.recipient,
-              place: normalized.place ?? "",
-              date: normalized.date ?? "",
-              time: normalized.time ?? "",
-              bring: normalized.bring ?? "",
-              then: normalized.then ?? "",
-              theme: normalized.theme,
-              no_dodge: String(normalized.no_dodge)
-            }
+
+        custom: {
+          product: String("little-date-invitation"),
+          slug: String(normalized.slug),
+          mode: String(normalized.mode),
+          sender: String(normalized.sender),
+          recipient: String(normalized.recipient),
+          place: String(normalized.place ?? ""),
+          date: String(normalized.date ?? ""),
+          time: String(normalized.time ?? ""),
+          bring: String(normalized.bring ?? ""),
+          then: String(normalized.then ?? ""),
+          theme: String(normalized.theme),
+          no_dodge: String(normalized.no_dodge),
+        }
           },
             test_mode: Deno.env.get("LEMONSQUEEZY_TEST_MODE") === "true",
             product_options: { enabled_variants: [Number(variantId)], redirect_url: redirect },
