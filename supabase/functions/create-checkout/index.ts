@@ -44,13 +44,33 @@ Deno.serve(async (req) => {
       response_place: null, response_bring: null, response_then: null,
     };
     const redirect = `${siteUrl.replace(/\/$/, "")}/?payment=success&slug=${encodeURIComponent(slug)}`;
+    
     console.log("Checkout custom field types:", {
-  place: typeof String(normalized.place ?? ""),
-  date: typeof String(normalized.date ?? ""),
-  time: typeof String(normalized.time ?? ""),
-  bring: typeof String(normalized.bring ?? ""),
-  then: typeof String(normalized.then ?? ""),
-});
+      place: typeof String(normalized.place ?? ""),
+      date: typeof String(normalized.date ?? ""),
+      time: typeof String(normalized.time ?? ""),
+      bring: typeof String(normalized.bring ?? ""),
+      then: typeof String(normalized.then ?? ""),
+    });
+
+    const customData = {
+      product: "little-date-invitation",
+      slug: String(normalized.slug),
+      mode: String(normalized.mode),
+      sender: String(normalized.sender),
+      recipient: String(normalized.recipient),
+      place: String(normalized.place ?? ""),
+      date: String(normalized.date ?? ""),
+      time: String(normalized.time ?? ""),
+      bring: String(normalized.bring ?? ""),
+      then: String(normalized.then ?? ""),
+      theme: String(normalized.theme),
+      no_dodge: String(normalized.no_dodge),
+    };
+
+    console.log("CUSTOM DATA TYPES", Object.fromEntries(
+      Object.entries(customData).map(([key, value]) => [key, typeof value])
+    ));
     
     const checkoutResponse = await fetch("https://api.lemonsqueezy.com/v1/checkouts", {
       method: "POST",
@@ -61,22 +81,8 @@ Deno.serve(async (req) => {
           attributes: {
             checkout_options: { embed: false },
           checkout_data: {
-
-        custom: {
-          product: "little-date-invitation",
-          slug: String(normalized.slug),
-          mode: String(normalized.mode),
-          sender: String(normalized.sender),
-          recipient: String(normalized.recipient),
-          place: String(normalized.place ?? ""),
-          date: String(normalized.date ?? ""),
-          time: String(normalized.time ?? ""),
-          bring: String(normalized.bring ?? ""),
-          then: String(normalized.then ?? ""),
-          theme: String(normalized.theme),
-          no_dodge: String(normalized.no_dodge),
-        }
-          },
+            custom: customData
+           },
             test_mode: Deno.env.get("LEMONSQUEEZY_TEST_MODE") === "true",
             product_options: { enabled_variants: [Number(variantId)], redirect_url: redirect },
           },
