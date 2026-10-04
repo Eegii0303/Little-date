@@ -44,6 +44,14 @@ Deno.serve(async (req) => {
       response_place: null, response_bring: null, response_then: null,
     };
     const redirect = `${siteUrl.replace(/\/$/, "")}/?payment=success&slug=${encodeURIComponent(slug)}`;
+    console.log("Checkout custom field types:", {
+  place: typeof String(normalized.place ?? ""),
+  date: typeof String(normalized.date ?? ""),
+  time: typeof String(normalized.time ?? ""),
+  bring: typeof String(normalized.bring ?? ""),
+  then: typeof String(normalized.then ?? ""),
+});
+    
     const checkoutResponse = await fetch("https://api.lemonsqueezy.com/v1/checkouts", {
       method: "POST",
       headers: { "Accept": "application/vnd.api+json", "Content-Type": "application/vnd.api+json", "Authorization": `Bearer ${apiKey}` },
@@ -55,7 +63,7 @@ Deno.serve(async (req) => {
           checkout_data: {
 
         custom: {
-          product: String("little-date-invitation"),
+          product: "little-date-invitation",
           slug: String(normalized.slug),
           mode: String(normalized.mode),
           sender: String(normalized.sender),
