@@ -29,6 +29,9 @@ Deno.serve(async (req) => {
 
 const custom = event?.meta?.custom_data ?? {};
 
+console.log("WEBHOOK META:", JSON.stringify(event?.meta));
+console.log("CUSTOM DATA:", JSON.stringify(custom));
+
 if (
   custom.product !== "little-date-invitation" ||
   typeof custom.slug !== "string" ||
