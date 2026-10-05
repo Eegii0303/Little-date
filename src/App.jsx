@@ -24,7 +24,6 @@ useEffect(() => {
   }
 }, [route, isInvite, inviteId]);
 
-useEffect(()=>{const d=readLocal();setMyInvites(Object.values(d).filter(x=>x.sender))},[route]);
 useEffect(()=>{const q=new URLSearchParams(location.search);if(q.get('payment')==='success'&&q.get('slug')&&supabase){const slug=q.get('slug');let alive=true;(async()=>{setBusy(true);setMsg('Payment received. Confirming your invitation…');for(let n=0;n<12&&alive;n++){const{data,error}=await supabase.rpc('get_invitation',{p_slug:slug});if(error){console.error('Could not confirm paid invitation:',error);setMsg('Payment was received, but the invitation is still being confirmed. Please refresh in a moment.');break}if(data){setInv(data);setUrl(`${location.origin}/i/${slug}`);setStep(9);setMsg('Your invitation is ready!');try{localStorage.removeItem('little-date-draft')}catch{};break}await new Promise(r=>setTimeout(r,1500))}if(alive&&!readLocal()[slug]&&!msg)setMsg('Payment is processing. Refresh this page in a moment to see your invitation.');setBusy(false)})();return()=>{alive=false}}if(q.get('payment')==='cancel')setMsg('Checkout was cancelled. Your invitation was not published.')},[]);function nav(path){history.pushState({},'',path);setRoute(location.pathname);setMsg('');document.querySelector('main')?.scrollTo({left:0,behavior:'smooth'})}function dodgeNo(){setNoPos({x:Math.round(Math.random()*180-90),y:Math.round(Math.random()*100-50)})}async function saveInvitation(){
  if(busy)return;
  if(!form.sender.trim()||!form.recipient.trim()){setMsg('Please enter both names.');return}
