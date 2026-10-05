@@ -3,7 +3,30 @@ const themes=[{id:'midnight',name:'Midnight Love',emoji:'🌙',desc:'Deep plum &
 const places=['Coffee','Dinner','Movie night','A long walk'],foods=['Sushi','Pizza','Pasta','Burgers','Korean food','Dessert'],bring=['Flowers','Something sweet','A playlist','Just me'],then=['Dessert','Stargazing','A drive','Not going home'];
 const id=()=>Math.random().toString(36).slice(2,10);
 function readLocal(){try{return JSON.parse(localStorage.getItem('little-date')||'{}')}catch{return{}}}
-export default function App(){const[route,setRoute]=useState(location.pathname),[mode,setMode]=useState('surprise'),[form,setForm]=useState({sender:'',recipient:'',place:'Coffee',date:'',time:'7:00 PM',bring:'Flowers',then:'Stargazing',theme:'midnight'}),[step,setStep]=useState(0),[inv,setInv]=useState(null),[date,setDate]=useState(''),[planStep,setPlanStep]=useState(1),[planTime,setPlanTime]=useState('6:00 PM'),[choice,setChoice]=useState({place:'',bring:'',then:''}),[busy,setBusy]=useState(false),[msg,setMsg]=useState(''),[url,setUrl]=useState(''),[premium,setPremium]=useState(false),[noDodge,setNoDodge]=useState(false),[noPos,setNoPos]=useState({x:0,y:0}),[myInvites,setMyInvites]=useState([]);const isInvite=route.startsWith('/i/');const previewMode=new URLSearchParams(location.search).get('preview')==='1';const inviteId=route.split('/')[2];const theme=themes.find(t=>t.id===(inv?.theme||form.theme))||themes[0];const update=(k,v)=>setForm(f=>({...f,[k]:v}));useEffect(()=>{const pop=()=>setRoute(location.pathname);addEventListener('popstate',pop);return()=>removeEventListener('popstate',pop)},[]);useEffect(()=>{if(isInvite&&inviteId){(async()=>{if(supabase){let{data}=await supabase.from('invitations').select('*').eq('slug',inviteId).maybeSingle();setInv(data||null);return}const d=readLocal();setInv(d[inviteId]||null)})()}},[route]);useEffect(()=>{const d=readLocal();setMyInvites(Object.values(d).filter(x=>x.sender))},[route]);useEffect(()=>{const q=new URLSearchParams(location.search);if(q.get('payment')==='success'&&q.get('slug')&&supabase){const slug=q.get('slug');let alive=true;(async()=>{setBusy(true);setMsg('Payment received. Confirming your invitation…');for(let n=0;n<8&&alive;n++){const{data,error}=await supabase.from('invitations').select('*').eq('slug',slug).maybeSingle();if(error)break;if(data){setInv(data);setUrl(`${location.origin}/i/${slug}`);setStep(9);setMsg('Your invitation is ready!');try{localStorage.removeItem('little-date-draft')}catch{};break}await new Promise(r=>setTimeout(r,1500))}if(alive&&!readLocal()[slug])setMsg('Payment is processing. Refresh this page in a moment to see your invitation.');setBusy(false)})();return()=>{alive=false}}if(q.get('payment')==='cancel')setMsg('Checkout was cancelled. Your invitation was not published.')},[]);function nav(path){history.pushState({},'',path);setRoute(location.pathname);setMsg('');document.querySelector('main')?.scrollTo({left:0,behavior:'smooth'})}function dodgeNo(){setNoPos({x:Math.round(Math.random()*180-90),y:Math.round(Math.random()*100-50)})}async function saveInvitation(){
+export default function App(){const[route,setRoute]=useState(location.pathname),[mode,setMode]=useState('surprise'),[form,setForm]=useState({sender:'',recipient:'',place:'Coffee',date:'',time:'7:00 PM',bring:'Flowers',then:'Stargazing',theme:'midnight'}),[step,setStep]=useState(0),[inv,setInv]=useState(null),[date,setDate]=useState(''),[planStep,setPlanStep]=useState(1),[planTime,setPlanTime]=useState('6:00 PM'),[choice,setChoice]=useState({place:'',bring:'',then:''}),[busy,setBusy]=useState(false),[msg,setMsg]=useState(''),[url,setUrl]=useState(''),[premium,setPremium]=useState(false),[noDodge,setNoDodge]=useState(false),[noPos,setNoPos]=useState({x:0,y:0}),[myInvites,setMyInvites]=useState([]);const isInvite=route.startsWith('/i/');const previewMode=new URLSearchParams(location.search).get('preview')==='1';const inviteId=route.split('/')[2];const theme=themes.find(t=>t.id===(inv?.theme||form.theme))||themes[0];const update=(k,v)=>setForm(f=>({...f,[k]:v}));
+useEffect(()=>{const pop=()=>setRoute(location.pathname);addEventListener('popstate',pop);return()=>removeEventListener('popstate',pop)},[]);
+
+useEffect(() => {
+  if (isInvite && inviteId && supabase) {
+    (async () => {
+      const { data, error } = await supabase.rpc(
+        'get_invitation',
+        { p_slug: inviteId }
+      );
+
+      if (error) {
+        console.error('Could not load invitation:', error);
+        setInv(null);
+        return;
+      }
+
+      setInv(data || null);
+    })();
+  }
+}, [route, isInvite, inviteId]);
+
+useEffect(()=>{const d=readLocal();setMyInvites(Object.values(d).filter(x=>x.sender))},[route]);
+useEffect(()=>{const q=new URLSearchParams(location.search);if(q.get('payment')==='success'&&q.get('slug')&&supabase){const slug=q.get('slug');let alive=true;(async()=>{setBusy(true);setMsg('Payment received. Confirming your invitation…');for(let n=0;n<8&&alive;n++){const{data,error}=await supabase.from('invitations').select('*').eq('slug',slug).maybeSingle();if(error)break;if(data){setInv(data);setUrl(`${location.origin}/i/${slug}`);setStep(9);setMsg('Your invitation is ready!');try{localStorage.removeItem('little-date-draft')}catch{};break}await new Promise(r=>setTimeout(r,1500))}if(alive&&!readLocal()[slug])setMsg('Payment is processing. Refresh this page in a moment to see your invitation.');setBusy(false)})();return()=>{alive=false}}if(q.get('payment')==='cancel')setMsg('Checkout was cancelled. Your invitation was not published.')},[]);function nav(path){history.pushState({},'',path);setRoute(location.pathname);setMsg('');document.querySelector('main')?.scrollTo({left:0,behavior:'smooth'})}function dodgeNo(){setNoPos({x:Math.round(Math.random()*180-90),y:Math.round(Math.random()*100-50)})}async function saveInvitation(){
  if(busy)return;
  if(!form.sender.trim()||!form.recipient.trim()){setMsg('Please enter both names.');return}
  if(mode==='custom'&&!form.place.trim()){setMsg('Please add a place for your date.');return}
@@ -16,7 +39,11 @@ export default function App(){const[route,setRoute]=useState(location.pathname),
   localStorage.setItem('little-date-draft',JSON.stringify(payload));
   const successUrl=`${location.origin}/?payment=success&slug=${encodeURIComponent(slug)}`;
   
-  const {data,error}=await supabase.functions.invoke('create-checkout',{body:{invitation:payload}});
+  const { data, error } = await supabase.rpc(
+  'get_invitation',
+  { p_slug: slug }
+    );
+    
   if(error)throw error;
   if(!data?.url)throw new Error(data?.error||'Checkout URL was not returned.');
   location.href=data.url;
