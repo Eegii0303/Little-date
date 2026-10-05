@@ -81,8 +81,10 @@ Deno.serve(async (req) => {
           attributes: {
             checkout_options: { embed: false },
           checkout_data: {
-            custom: customData
-           },
+            custom: {
+              slug: String(normalized.slug),
+            },
+          },
             test_mode: Deno.env.get("LEMONSQUEEZY_TEST_MODE") === "true",
             product_options: { enabled_variants: [Number(variantId)], redirect_url: redirect },
           },
