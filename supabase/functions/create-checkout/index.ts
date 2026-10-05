@@ -72,7 +72,15 @@ Deno.serve(async (req) => {
       Object.entries(customData).map(([key, value]) => [key, typeof value])
     ));
     console.log("OUTGOING CHECKOUT CUSTOM:", JSON.stringify(customData));
-    
+    console.log("CHECKOUT CUSTOM DATA:", JSON.stringify(customData));
+    console.log(
+      "CHECKOUT CUSTOM TYPES:",
+      Object.fromEntries(
+        Object.entries(customData).map(([key, value]) => [key, typeof value])
+      )
+    );
+
+
     const checkoutResponse = await fetch("https://api.lemonsqueezy.com/v1/checkouts", {
       method: "POST",
       headers: { "Accept": "application/vnd.api+json", "Content-Type": "application/vnd.api+json", "Authorization": `Bearer ${apiKey}` },
