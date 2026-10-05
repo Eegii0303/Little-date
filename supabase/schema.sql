@@ -27,12 +27,45 @@ alter table public.invitations add column if not exists paid_at timestamptz;
 alter table public.invitations add column if not exists expires_at timestamptz;
 alter table public.invitations enable row level security;
 revoke all on public.invitations from anon, authenticated;
-grant select on public.invitations to anon, authenticated;
 drop policy if exists "anon can create invitations" on public.invitations;
 drop policy if exists "anon can read invitations" on public.invitations;
 drop policy if exists "anon can update invitations" on public.invitations;
 drop policy if exists "public can read active paid invitations" on public.invitations;
-create policy "public can read active paid invitations" on public.invitations for select to anon, authenticated using (is_paid = true and expires_at > now());
+
+create or replace function public.get_invitation(p_slug text)
+returns jsonb
+language sql
+security definer
+set search_path = public
+as $$
+  select jsonb_build_object(
+    'slug', i.slug,
+    'mode', i.mode,
+    'sender', i.sender,
+    'recipient', i.recipient,
+    'place', i.place,
+    'date', i.date,
+    'time', i.time,
+    'bring', i.bring,
+    'then', i."then",
+    'theme', i.theme,
+    'no_dodge', i.no_dodge,
+    'status', i.status,
+    'response_date', i.response_date,
+    'response_time', i.response_time,
+    'response_place', i.response_place,
+    'response_bring', i.response_bring,
+    'response_then', i.response_then
+  )
+  from public.invitations i
+  where i.slug = p_slug
+    and i.is_paid = true
+    and i.expires_at > now()
+  limit 1;
+$$;
+
+revoke all on function public.get_invitation(text) from public;
+grant execute on function public.get_invitation(text) to anon, authenticated;
 
 create or replace function public.submit_invitation_response(p_slug text, p_response text)
 returns boolean language plpgsql security definer set search_path = public as $$
