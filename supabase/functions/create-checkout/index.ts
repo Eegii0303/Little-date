@@ -71,6 +71,7 @@ Deno.serve(async (req) => {
     console.log("CUSTOM DATA TYPES", Object.fromEntries(
       Object.entries(customData).map(([key, value]) => [key, typeof value])
     ));
+    console.log("OUTGOING CHECKOUT CUSTOM:", JSON.stringify(customData));
     
     const checkoutResponse = await fetch("https://api.lemonsqueezy.com/v1/checkouts", {
       method: "POST",
@@ -81,9 +82,7 @@ Deno.serve(async (req) => {
           attributes: {
             checkout_options: { embed: false },
           checkout_data: {
-            custom: {
-              slug: String(normalized.slug),
-            },
+            custom: customData,
           },
             test_mode: Deno.env.get("LEMONSQUEEZY_TEST_MODE") === "true",
             product_options: { enabled_variants: [Number(variantId)], redirect_url: redirect },
