@@ -53,20 +53,26 @@ Deno.serve(async (req) => {
       then: typeof String(normalized.then ?? ""),
     });
 
-    const customData = {
+    
+    const customData: Record<string, string> = {
       product: "little-date-invitation",
       slug: String(normalized.slug),
       mode: String(normalized.mode),
       sender: String(normalized.sender),
       recipient: String(normalized.recipient),
-      place: String(normalized.place ?? ""),
-      date: String(normalized.date ?? ""),
-      time: String(normalized.time ?? ""),
-      bring: String(normalized.bring ?? ""),
-      then: String(normalized.then ?? ""),
       theme: String(normalized.theme),
       no_dodge: String(normalized.no_dodge),
     };
+
+    for (const key of ["place", "date", "time", "bring", "then"] as const) {
+      const value = normalized[key];
+      if (typeof value === "string" && value.trim() !== "") {
+        customData[key] = value.trim();
+      }
+    }
+
+    console.log("OUTGOING CHECKOUT CUSTOM:", JSON.stringify(customData));
+
 
     console.log("CUSTOM DATA TYPES", Object.fromEntries(
       Object.entries(customData).map(([key, value]) => [key, typeof value])
