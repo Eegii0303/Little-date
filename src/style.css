@@ -126,3 +126,289 @@ main > section.panel {
   -webkit-overflow-scrolling: touch;
   min-height: 0;
 }
+
+/* =========================
+   LITTLE DATE — THEME PACK
+   ========================= */
+
+/* Fix No button transition */
+.no-answer{
+  transition:
+    transform .22s cubic-bezier(.2,.8,.2,1),
+    background .2s ease,
+    box-shadow .2s ease;
+}
+
+/* ---------- MIDNIGHT LOVE ---------- */
+
+.app.theme-midnight{
+  background:
+    radial-gradient(circle at 20% 15%,#702c61 0,transparent 28%),
+    radial-gradient(circle at 82% 30%,#3d2760 0,transparent 30%),
+    radial-gradient(circle at 50% 90%,#21143b 0,transparent 38%),
+    #0b0813;
+}
+
+.app.theme-midnight:before{
+  content:'✦  ·  💗  ·  ✦  ·  ♡  ·  ✦  ·  💗';
+  opacity:.22;
+  font-size:22px;
+  letter-spacing:24px;
+  animation:midnightDrift 14s linear infinite;
+}
+
+.app.theme-midnight .heroart{
+  animation:midnightFloat 3.5s ease-in-out infinite;
+  filter:
+    drop-shadow(0 0 18px #ff72b055)
+    drop-shadow(0 10px 30px #8d4cff33);
+}
+
+.app.theme-midnight .panel,
+.app.theme-midnight .hero{
+  background:
+    linear-gradient(145deg,#291536ee,#120b1df5);
+  border-color:#ff9fca22;
+  box-shadow:
+    0 20px 70px #0007,
+    0 0 35px #bd4d9b12;
+}
+
+@keyframes midnightFloat{
+  0%,100%{transform:translateY(0) rotate(-2deg)}
+  50%{transform:translateY(-12px) rotate(2deg)}
+}
+
+@keyframes midnightDrift{
+  0%{transform:translateX(8%)}
+  50%{transform:translateX(-8%)}
+  100%{transform:translateX(8%)}
+}
+
+
+/* ---------- SWEET PASTEL ---------- */
+
+.app.theme-pastel{
+  background:
+    radial-gradient(circle at 15% 20%,#ffc7dc 0,transparent 27%),
+    radial-gradient(circle at 85% 25%,#c9d7ff 0,transparent 27%),
+    radial-gradient(circle at 50% 90%,#ffe6c7 0,transparent 32%),
+    #3a2537;
+}
+
+.app.theme-pastel:before{
+  content:'♡  🧸  ✿  ♡  ✿  🧸  ♡';
+  opacity:.17;
+  font-size:25px;
+  letter-spacing:25px;
+  animation:pastelFloat 10s ease-in-out infinite;
+}
+
+.app.theme-pastel .panel,
+.app.theme-pastel .hero{
+  background:
+    linear-gradient(145deg,#624052ee,#38283af2);
+  border-color:#ffd7e822;
+  box-shadow:0 20px 65px #12091355;
+}
+
+.app.theme-pastel .heroart{
+  animation:pastelBounce 2.8s ease-in-out infinite;
+  filter:drop-shadow(0 8px 20px #ffc2dd55);
+}
+
+.app.theme-pastel .selected{
+  border-color:#ffb7d3!important;
+  background:#ffb7d31c!important;
+}
+
+@keyframes pastelBounce{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-8px) scale(1.04)}
+}
+
+@keyframes pastelFloat{
+  0%,100%{transform:translateY(5px)}
+  50%{transform:translateY(-12px)}
+}
+
+
+/* ---------- ROSE ROMANCE ---------- */
+
+.app.theme-rose{
+  background:
+    radial-gradient(circle at 18% 15%,#a74661 0,transparent 27%),
+    radial-gradient(circle at 82% 70%,#69263e 0,transparent 32%),
+    linear-gradient(145deg,#210c16,#10070d);
+}
+
+.app.theme-rose:before{
+  content:'🌹  ·  ❀  ·  🌹  ·  ❀  ·  🌹';
+  opacity:.18;
+  font-size:20px;
+  letter-spacing:22px;
+  animation:roseFall 11s linear infinite;
+}
+
+.app.theme-rose .panel,
+.app.theme-rose .hero{
+  background:
+    linear-gradient(145deg,#3a1624ee,#190c14f5);
+  border-color:#e99aab2b;
+  box-shadow:
+    0 20px 70px #0008,
+    inset 0 1px #ffd2dc12;
+}
+
+.app.theme-rose .heroart{
+  animation:roseSway 4s ease-in-out infinite;
+  filter:drop-shadow(0 8px 22px #e94f7655);
+}
+
+.app.theme-rose h1,
+.app.theme-rose h2{
+  color:#ffe2e8;
+}
+
+@keyframes roseSway{
+  0%,100%{transform:rotate(-2deg) translateY(0)}
+  50%{transform:rotate(3deg) translateY(-7px)}
+}
+
+@keyframes roseFall{
+  0%{transform:translateY(-20px) rotate(0)}
+  50%{transform:translateY(20px) rotate(4deg)}
+  100%{transform:translateY(-20px) rotate(-4deg)}
+}
+
+
+/* ---------- MINIMAL ---------- */
+
+.app.theme-minimal{
+  background:
+    linear-gradient(145deg,#292426,#111011);
+}
+
+.app.theme-minimal:before{
+  content:'';
+  opacity:0;
+  animation:none;
+}
+
+.app.theme-minimal .panel,
+.app.theme-minimal .hero{
+  background:#201c1eee;
+  border-color:#ffffff1c;
+  box-shadow:0 18px 50px #0005;
+}
+
+.app.theme-minimal .heroart{
+  animation:minimalFloat 5s ease-in-out infinite;
+  filter:none;
+}
+
+.app.theme-minimal h1,
+.app.theme-minimal h2{
+  color:#f5eeee;
+}
+
+.app.theme-minimal .eyebrow{
+  color:#d9c9ce;
+}
+
+.app.theme-minimal .hero>button,
+.app.theme-minimal .panel>button:not(.secondary),
+.app.theme-minimal .actions button:first-child{
+  background:#f0e5e8;
+  color:#282126;
+  box-shadow:none;
+}
+
+.app.theme-minimal .selected{
+  border-color:#e5d5da!important;
+  background:#ffffff10!important;
+  box-shadow:inset 0 0 0 1px #e5d5da;
+}
+
+@keyframes minimalFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
+}
+
+/* ---------- STARLIGHT ---------- */
+
+.app.theme-starlight{
+  background:
+    radial-gradient(circle at 15% 15%,#304b83 0,transparent 25%),
+    radial-gradient(circle at 80% 35%,#49347e 0,transparent 27%),
+    radial-gradient(circle at 50% 100%,#172c55 0,transparent 35%),
+    #080d1c;
+}
+
+.app.theme-starlight:before{
+  content:'✦     ·   ✧       ✦    ·       ✧      ✦';
+  opacity:.3;
+  color:#dbe7ff;
+  font-size:18px;
+  letter-spacing:18px;
+  animation:starTwinkle 3s ease-in-out infinite;
+}
+
+.app.theme-starlight .panel,
+.app.theme-starlight .hero{
+  background:
+    linear-gradient(145deg,#152447e8,#0d1429f5);
+  border-color:#9ebeff26;
+  box-shadow:
+    0 20px 70px #0009,
+    0 0 45px #547bdc12;
+}
+
+.app.theme-starlight .heroart{
+  animation:starFloat 4s ease-in-out infinite;
+  filter:
+    drop-shadow(0 0 15px #9ec7ff88)
+    drop-shadow(0 10px 30px #4c73d044);
+}
+
+.app.theme-starlight .eyebrow{
+  color:#bcd2ff;
+}
+
+.app.theme-starlight h1,
+.app.theme-starlight h2{
+  color:#e8f0ff;
+}
+
+@keyframes starTwinkle{
+  0%,100%{opacity:.16;transform:scale(1)}
+  50%{opacity:.42;transform:scale(1.04)}
+}
+
+@keyframes starFloat{
+  0%,100%{transform:translateY(0) rotate(0)}
+  50%{transform:translateY(-10px) rotate(1deg)}
+}
+
+
+/* ---------- THEME BUTTON PREVIEWS ---------- */
+
+.themechoice.swatch-midnight{
+  box-shadow:inset 0 0 30px #c34c8b18;
+}
+
+.themechoice.swatch-pastel{
+  box-shadow:inset 0 0 30px #ffc2dc22;
+}
+
+.themechoice.swatch-rose{
+  box-shadow:inset 0 0 30px #d94c6b22;
+}
+
+.themechoice.swatch-minimal{
+  box-shadow:inset 0 0 30px #ffffff0a;
+}
+
+.themechoice.swatch-starlight{
+  box-shadow:inset 0 0 30px #668cff22;
+}
