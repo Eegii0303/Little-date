@@ -183,19 +183,13 @@ function dodgeNo(mouseX,mouseY){
 
 
 
-  const moveDistance=110;
+  const moveDistance = 24;
 
+  let x = (dx / length) * moveDistance;
+  let y = (dy / length) * moveDistance;
 
-
-  let x=(dx/length)*moveDistance;
-
-  let y=(dy/length)*moveDistance;
-
-
-
-  x=Math.max(-130,Math.min(130,x));
-
-  y=Math.max(-80,Math.min(80,y));
+  x = Math.max(-24, Math.min(24, x));
+  y = Math.max(-12, Math.min(12, y));
 
 
 
@@ -387,6 +381,33 @@ async function respond(answer){
 
         setMsg('')}
 
+function addToCalendar() {
+  const eventDate = inv?.response_date || inv?.date;
+  const eventTime = inv?.response_time || inv?.time;
+  const dates = toCalendarDateRange(eventDate, eventTime);
+
+  if (!dates) {
+    setMsg('A valid date and time are needed to add this event.');
+    return;
+  }
+
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: `Date with ${inv.sender} & ${inv.recipient}`,
+    dates,
+    details: `Your Little Date invitation: ${location.origin}/i/${inv.slug}`,
+    location: inv.response_place || inv.place || ''
+  });
+
+  window.open(
+    `https://calendar.google.com/calendar/render?${params.toString()}`,
+    '_blank',
+    'noopener,noreferrer'
+  );
+
+  setMsg('');
+}
+
 async function copy(){
 
   try{await navigator.clipboard.writeText(url);
@@ -465,7 +486,7 @@ async function copy(){
 <p className="muted">{inv.sender} → {inv.recipient}</p>
 <div className="ticket">
 <p><b>Status</b> {inv.status==='yes'?'YES 💗':inv.status==='no'?'NO':inv.status==='planning'?'YES — PLANNING':'WAITING'}</p>
-{inv.status==='yes'&&<><p><b>Date</b> {inv.response_date||inv.date||'To be decided'} {inv.response_time||inv.time||''}</p><p><b>Where</b> {inv.response_place||inv.place||'To be decided'}</p><p><b>Bring</b> {inv.response_bring||inv.bring||'—'}</p><p><b>Then</b> {inv.response_then||inv.then||'—'}</p></>}
+{inv.status==='yes'&&<><p><b>Date</b> {inv.response_date || inv.date || 'To be decided'}{' · '}{inv.response_time || inv.time || ''}</p><p><b>Where</b> {inv.response_place||inv.place||'To be decided'}</p></>}
 {inv.status==='planning'&&<p className="muted">They accepted and are choosing the date details now.</p>}
 {inv.status==='no'&&<p className="muted">They declined the invitation.</p>}
 </div></>}
@@ -497,15 +518,11 @@ async function copy(){
 
       {inv.response_time||inv.time||''}</p><p><b>Where</b> 
 
-      {inv.response_place||inv.place}</p><p><b>Bring</b> 
-
-      {inv.response_bring||inv.bring}</p><p><b>Then</b> 
-
       {inv.response_then||inv.then}</p></div>
 
-      <button onClick={()=>setMsg('Add this date to your calendar app using the date and time above.')}> 
-
-        <CalendarDays size={18}/> Add to calendar</button>
+      <button type="button" onClick={addToCalendar}>
+        <CalendarDays size={18}/> Add to calendar
+      </button>
 
         {msg&&<p className="notice">{msg}</p>}</>:inv.status==='no'?<>
 
@@ -589,10 +606,6 @@ async function copy(){
 
               <p><b>🍓 Food</b>{choice.place}</p>
 
-              <p><b>💐 Bring</b>{choice.bring||'Just me'}</p>
-
-              <p><b>✨ Then</b>{choice.then||'A little more time together'}</p>
-
             </div>
 
           </>:<>
@@ -633,15 +646,9 @@ async function copy(){
 
       <div className="ticket">
 
-      <p><b>When</b> 
+      <p><b>When</b>{' '}{inv.date || 'Date to be confirmed'}{' · '}{inv.time}</p>
 
-      {inv.date||'Date to be confirmed'} · {inv.time}</p>
-
-      <p><b>Where</b> {inv.place}</p>
-
-      <p><b>Bring</b> {inv.bring}</p>
-
-      <p><b>Then</b> {inv.then}</p></div>}
+      <p><b>Where</b> {inv.place}</p></div>}
 
       <p className="muted">There is only one right answer.</p>
 
@@ -717,6 +724,47 @@ async function copy(){
 
     <h1>Hey {form.recipient||'someone special'} 💗</h1>
 
-    <p className="muted">{form.sender||'Someone special'} has a little question for you.</p>{mode==='custom'&&<div className="ticket"><p><b>When</b> {form.date||'To be decided'} · {form.time}</p><p><b>Where</b> {form.place||'Your chosen place'}</p><p><b>Bring</b> {form.bring}</p><p><b>Then</b> {form.then}</p></div>}<p className="preview-note">Preview only · No invitation link is live yet.</p><div className="actions"><button className="secondary" onClick={()=>setStep(0)}>Edit details <ArrowLeft size={16}/></button><button onClick={saveInvitation} disabled={busy}>{busy?'Opening checkout…':'Pay $1 & publish'} <Heart size={17}/></button></div>{msg&&<p className="notice">{msg}</p>}</section>:step===9?<section className="panel"><div className="bear">💌</div><h1>Your invitation is ready!</h1><p className="muted">Your payment is confirmed. Send this invitation link to {inv?.recipient||form.recipient}.</p><div className="linkbox">{url}</div><button onClick={copy}><Copy size={17}/> Copy invitation link</button>{viewUrl&&<><div className="linkbox">{viewUrl}</div><button className="secondary" onClick={()=>location.href=viewUrl}>View response <ExternalLink size={16}/></button></>}<button className="secondary" onClick={()=>nav('/i/'+inv.slug+'?preview=1')}>Preview invitation <ExternalLink size={16}/></button>{msg&&<p className="notice">{msg}</p>}<p className="tiny">This invitation link expires 7 days after payment confirmation. Anyone with the link can respond; avoid sensitive personal information.</p></section>:<><section className="hero"><span className="eyebrow"><Sparkles size={14}/> A LITTLE LOVE, A LOT OF MAGIC</span><div className="heroart">💌<span>💗</span></div><h1>Make a little<br/><em>date magic.</em></h1><p className="muted">Create a sweet invitation they’ll remember.</p><button onClick={()=>{setStep(0);document.getElementById('create')?.scrollIntoView({behavior:'smooth'})}}>Create an invitation <Heart size={17}/></button><p className="tiny">Free to start · No account required</p></section><section id="create" className="panel"><div className="eyebrow">01 / CREATE YOUR INVITATION</div><h2>How would you like to invite?</h2><div className="modegrid"><button className={mode==='custom'?'selected':''} onClick={()=>setMode('custom')}><span>💐</span><b>Custom invitation</b><small>You plan every detail</small></button><button className={mode==='surprise'?'selected':''} onClick={()=>setMode('surprise')}><span>🎀</span><b>Surprise invitation</b><small>Let them plan the date</small></button></div><div className="field"><label>Your name</label><input value={form.sender} onChange={e=>update('sender',e.target.value)} placeholder="Your name" maxLength="60"/></div><div className="field"><label>Their name</label><input value={form.recipient} onChange={e=>update('recipient',e.target.value)} placeholder="Their name" maxLength="60"/></div><div className="field"><label>Your email</label><input type="email" value={form.creator_email} onChange={e=>update('creator_email',e.target.value)} placeholder="you@example.com" maxLength="120" autoComplete="email"/><small>We will email you the invitation link and private response link after payment.</small></div>{mode==='custom'&&<><div className="field"><label>Where are you going?</label><input value={form.place} onChange={e=>update('place',e.target.value)} placeholder="Coffee shop, park…" maxLength="100"/></div><div className="split"><div className="field"><label>Date</label><input type="date" min={new Date().toISOString().slice(0,10)} value={form.date} onChange={e=>update('date',e.target.value)}/></div><div className="field"><label>Time</label><input value={form.time} onChange={e=>update('time',e.target.value)} placeholder="7:00 PM" maxLength="30"/></div></div><Choice title="What to bring?" items={bring} value={form.bring} onChange={v=>update('bring',v)}/><Choice title="And then?" items={then} value={form.then} onChange={v=>update('then',v)}/></>}<div className="field dodge-setting"><label>NO button behavior</label><label className="toggleline"><input type="checkbox" checked={noDodge} onChange={e=>setNoDodge(e.target.checked)}/> Make the No button dodge (cannot be selected)</label><small>Recipients can still choose Yes. Use this as a playful effect, not to pressure someone.</small></div><div className="eyebrow">02 / PICK A THEME</div><div className="themegrid">{themes.map(t=><button key={t.id} onClick={()=>update('theme',t.id)} className={'themechoice swatch-'+t.id+(form.theme===t.id?' selected':'')}><span>{t.emoji}</span><b>{t.name}</b>{form.theme===t.id&&<Check size={15}/>}</button>)}</div><button className="wide" onClick={()=>{setMsg('');setStep(7)}}>Preview invitation <ExternalLink size={17}/></button>{msg&&<p className="notice">{msg}</p>}<p className="tiny">By creating a link, you agree to use it respectfully. Recipients can decline.</p></section><section className="panel"><div className="eyebrow">MADE FOR YOUR MOMENT</div><h2>Small details. Sweet memories.</h2><div className="feature"><span>💌</span><div><b>One easy link</b><p className="muted">Share your invitation by text or social media.</p></div></div><div className="feature"><span>💞</span><div><b>Made personal</b><p className="muted">Names, date plans and themes that feel like you.</p></div></div><div className="feature"><span>🔒</span><div><b>Private by link</b><p className="muted">Only people with the invitation link can open it.</p></div></div><button className="secondary wide" onClick={()=>nav('/pricing')}>Invitation pricing <Lock size={15}/></button></section></>}</main><footer>♡ LITTLE DATE <span>Made for moments that matter.</span></footer></div>}
+    <p className="muted">{form.sender||'Someone special'} has a little question for you.</p>{mode==='custom'&&<div className="ticket"><p>
+    <p><b>When</b> {form.date || 'To be decided'}{' · '}{form.time}</p><p><b>Where</b> {form.place||'Your chosen place'}</p></div>}<p className="preview-note">Preview only · No invitation link is live yet.</p><div className="actions"><button className="secondary" onClick={()=>setStep(0)}>Edit details <ArrowLeft size={16}/></button>
+    <button
+      className="primary"
+      onClick={saveInvitation}
+      disabled={busy}
+    >
+      {busy ? 'Opening checkout…' : 'Pay $1 & publish'}
+      <Heart size={17}/>
+    </button></div>{msg&&<p className="notice">{msg}</p>}</section>:step===9?<section className="panel"><div className="bear">💌</div><h1>Your invitation is ready!</h1><p className="muted">Your payment is confirmed. Send this invitation link to {inv?.recipient||form.recipient}.</p><div className="linkbox">{url}</div><button onClick={copy}><Copy size={17}/> Copy invitation link</button>{viewUrl&&<><div className="linkbox">{viewUrl}</div><button className="secondary" onClick={()=>location.href=viewUrl}>View response <ExternalLink size={16}/></button></>}<button className="secondary" onClick={()=>nav('/i/'+inv.slug+'?preview=1')}>Preview invitation <ExternalLink size={16}/></button>{msg&&<p className="notice">{msg}</p>}<p className="tiny">This invitation link expires 7 days after payment confirmation. Anyone with the link can respond; avoid sensitive personal information.</p></section>:<><section className="hero"><span className="eyebrow"><Sparkles size={14}/> A LITTLE LOVE, A LOT OF MAGIC</span><div className="heroart">💌<span>💗</span></div><h1>Make a little<br/><em>date magic.</em></h1><p className="muted">Create a sweet invitation they’ll remember.</p><button onClick={()=>{setStep(0);document.getElementById('create')?.scrollIntoView({behavior:'smooth'})}}>Create an invitation <Heart size={17}/></button><p className="tiny">Free to start · No account required</p></section><section id="create" className="panel"><div className="eyebrow">01 / CREATE YOUR INVITATION</div><h2>How would you like to invite?</h2><div className="modegrid"><button className={mode==='custom'?'selected':''} onClick={()=>setMode('custom')}><span>💐</span><b>Custom invitation</b><small>You plan every detail</small></button><button className={mode==='surprise'?'selected':''} onClick={()=>setMode('surprise')}><span>🎀</span><b>Surprise invitation</b><small>Let them plan the date</small></button></div><div className="field"><label>Your name</label><input value={form.sender} onChange={e=>update('sender',e.target.value)} placeholder="Your name" maxLength="60"/></div><div className="field"><label>Their name</label><input value={form.recipient} onChange={e=>update('recipient',e.target.value)} placeholder="Their name" maxLength="60"/></div><div className="field"><label>Your email</label><input type="email" value={form.creator_email} onChange={e=>update('creator_email',e.target.value)} placeholder="you@example.com" maxLength="120" autoComplete="email"/><small>We will email you the invitation link and private response link after payment.</small></div>{mode==='custom'&&<><div className="field"><label>Where are you going?</label><input value={form.place} onChange={e=>update('place',e.target.value)} placeholder="Coffee shop, park…" maxLength="100"/></div><div className="split"><div className="field"><label>Date</label><input type="date" min={new Date().toISOString().slice(0,10)} value={form.date} onChange={e=>update('date',e.target.value)}/></div><div className="field"><label>Time</label><input value={form.time} onChange={e=>update('time',e.target.value)} placeholder="7:00 PM" maxLength="30"/></div></div>}<div className="field dodge-setting"><label>NO button behavior</label><label className="toggleline"><input type="checkbox" checked={noDodge} onChange={e=>setNoDodge(e.target.checked)}/> Make the No button dodge (cannot be selected)</label><small>Recipients can still choose Yes. Use this as a playful effect, not to pressure someone.</small></div><div className="eyebrow">02 / PICK A THEME</div><div className="themegrid">{themes.map(t=><button key={t.id} onClick={()=>update('theme',t.id)} className={'themechoice swatch-'+t.id+(form.theme===t.id?' selected':'')}><span>{t.emoji}</span><b>{t.name}</b>{form.theme===t.id&&<Check size={15}/>}</button>)}</div><button className="wide" onClick={()=>{setMsg('');setStep(7)}}>Preview invitation <ExternalLink size={17}/></button>{msg&&<p className="notice">{msg}</p>}<p className="tiny">By creating a link, you agree to use it respectfully. Recipients can decline.</p></section><section className="panel"><div className="eyebrow">MADE FOR YOUR MOMENT</div><h2>Small details. Sweet memories.</h2><div className="feature"><span>💌</span><div><b>One easy link</b><p className="muted">Share your invitation by text or social media.</p></div></div><div className="feature"><span>💞</span><div><b>Made personal</b><p className="muted">Names, date plans and themes that feel like you.</p></div></div><div className="feature"><span>🔒</span><div><b>Private by link</b><p className="muted">Only people with the invitation link can open it.</p></div></div><button className="secondary wide" onClick={()=>nav('/pricing')}>Invitation pricing <Lock size={15}/></button></section></>}</main><footer>♡ LITTLE DATE <span>Made for moments that matter.</span></footer></div>}
+
+function toCalendarDateRange(dateValue, timeValue) {
+  const dateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateValue || '');
+  const timeMatch = /^\s*(\d{1,2}):(\d{2})\s*(AM|PM)\s*$/i.exec(timeValue || '');
+
+  if (!dateMatch || !timeMatch) return null;
+
+  const [, year, month, day] = dateMatch;
+  let hours = Number(timeMatch[1]);
+  const minutes = Number(timeMatch[2]);
+  const meridiem = timeMatch[3].toUpperCase();
+
+  if (hours < 1 || hours > 12 || minutes > 59) return null;
+
+  if (meridiem === 'PM' && hours !== 12) hours += 12;
+  if (meridiem === 'AM' && hours === 12) hours = 0;
+
+  const start = new Date(
+    Number(year),
+    Number(month) - 1,
+    Number(day),
+    hours,
+    minutes
+  );
+
+  const end = new Date(start.getTime() + 60 * 60 * 1000);
+
+  const formatDateTime = (d) =>
+    `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}${String(d.getMinutes()).padStart(2, '0')}00`;
+
+  return `${formatDateTime(start)}/${formatDateTime(end)}`;
+}
 
 function Choice({title,items,value,onChange}){return <div className="field"><label>{title}</label><div className="choicegrid">{items.map((x,i)=><button type="button" key={x} className={value===x?'selected':''} onClick={()=>onChange(x)}><span>{['✿','♡','♫','✧'][i%4]}</span>{x}</button>)}</div></div>}

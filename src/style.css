@@ -412,3 +412,79 @@ main > section.panel {
 .themechoice.swatch-starlight{
   box-shadow:inset 0 0 30px #668cff22;
 }
+
+/* Targeted button polish */
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+button:focus-visible {
+  outline: 2px solid #ffd0e2;
+  outline-offset: 3px;
+}
+
+button:disabled {
+  opacity: 0.58;
+  cursor: wait;
+  filter: none;
+}
+
+.hero > button,
+.panel > button:not(.secondary),
+.actions button {
+  min-height: 46px;
+}
+
+.actions {
+  overflow: hidden;
+  padding: 8px 4px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.actions button {
+  min-width: 0;
+  max-width: 100%;
+  flex: 1 1 112px;
+  white-space: normal;
+}
+
+.actions button.primary {
+  border: 0;
+  background: linear-gradient(110deg, #ff80ac, #f45b91);
+  color: #32101f;
+  border-radius: 999px;
+  padding: 14px 18px;
+  box-shadow: 0 8px 28px #f45b9140;
+}
+
+.actions button.secondary {
+  border: 1px solid #ffffff20;
+  background: #ffffff09;
+  color: #f4dce9;
+  box-shadow: none;
+}
+
+.actions button.primary:disabled {
+  box-shadow: none;
+}
+
+.no-answer {
+  max-width: 100%;
+}
+
+@media (max-width: 420px) {
+  .actions {
+    gap: 8px;
+  }
+
+  .actions button {
+    flex-basis: 100px;
+    padding: 12px 10px;
+    font-size: 13px;
+  }
+}
