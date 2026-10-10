@@ -708,9 +708,17 @@ async function copy(){
 
       <p><b>Where</b> {inv.place}</p>
 
-      {inv.then && (
-       <p><b>Plan</b> {inv.then}</p>
+      {mode === 'custom' && form.activity && (
+        <p>
+          <b>Date idea</b> {' '}
+          {form.activity === 'Dinner' && '🍽️ '}
+          {form.activity === 'Coffee' && '☕ '}
+          {form.activity === 'Movie night' && '🎬 '}
+          {form.activity === 'A long walk' && '🌷 '}
+          {form.activity}
+        </p>
       )}
+
     </div>}
 
       <p className="muted">There is only one right answer.</p>
@@ -796,6 +804,16 @@ async function copy(){
     <p>
       <b>Where</b> {form.place || 'Your chosen place'}
     </p>
+    {mode === 'custom' && form.activity && (
+    <p>
+      <b>Date idea</b> {' '}
+      {form.activity === 'Dinner' && '🍽️ '}
+      {form.activity === 'Coffee' && '☕ '}
+      {form.activity === 'Movie night' && '🎬 '}
+      {form.activity === 'A long walk' && '🌷 '}
+      {form.activity}
+    </p>
+  )}
   </div>
 )}
     <p className="preview-note">Preview only · No invitation link is live yet.</p>
