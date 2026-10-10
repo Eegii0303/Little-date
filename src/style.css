@@ -488,3 +488,166 @@ button:disabled {
     font-size: 13px;
   }
 }
+
+
+/* Romantic custom calendar */
+.date-picker {
+  position: relative;
+  width: 100%;
+}
+
+.date-trigger {
+  width: 100%;
+  min-height: 54px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  color: #ffe0ed;
+  background: #100b16;
+  border: 1px solid #f47ba955;
+  border-radius: 15px;
+}
+
+.date-trigger svg {
+  color: #ff91bb;
+  flex-shrink: 0;
+}
+
+.date-trigger:hover {
+  border-color: #ff91bb;
+}
+
+.calendar-popover {
+  position: relative;
+  z-index: 10;
+  margin-top: 10px;
+  padding: 16px;
+  color: #ffe0ed;
+  background: linear-gradient(145deg, #291536, #120b1d);
+  border: 1px solid #ff9fca55;
+  border-radius: 20px;
+  box-shadow: 0 18px 45px #0008;
+}
+
+.calendar-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.calendar-heading button {
+  width: 36px;
+  height: 36px;
+  color: #ff9fc2;
+  background: #ffffff10;
+  border: 1px solid #ffffff18;
+  border-radius: 10px;
+  font-size: 24px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+  text-align: center;
+}
+
+.calendar-weekday {
+  padding: 8px 0;
+  color: #d6a9c2;
+  font-size: 12px;
+}
+
+.calendar-day {
+  min-width: 0;
+  aspect-ratio: 1;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #ffe0ed;
+  background: #ffffff08;
+}
+
+.calendar-day:hover:not(:disabled) {
+  background: #f47ba933;
+  border-color: #f47ba9;
+}
+
+.calendar-day.selected {
+  color: #32101f;
+  background: linear-gradient(135deg, #ff9fc2, #f45b91);
+  border-color: #ffc3da;
+}
+
+.calendar-day:disabled {
+  color: #746478;
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.calendar-empty {
+  aspect-ratio: 1;
+}
+
+@media (max-width: 380px) {
+  .calendar-popover {
+    padding: 10px;
+  }
+
+  .calendar-grid {
+    gap: 3px;
+  }
+}
+
+
+/* Celebration when a custom invitation is accepted */
+.invitation {
+  position: relative;
+}
+
+.celebration-confetti {
+  position: relative;
+  height: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.celebration-confetti span {
+  position: absolute;
+  left: 50%;
+  top: -25px;
+  font-size: 20px;
+  opacity: 0;
+  animation: loveBurst 1.8s ease-out both;
+  animation-delay: calc(var(--i) * 25ms);
+}
+
+@keyframes loveBurst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(.3) rotate(0deg);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform:
+      translate(
+        calc(-50% + (var(--i) - 12) * 13px),
+        calc(-90px - (var(--i) % 5) * 18px)
+      )
+      scale(1.2)
+      rotate(180deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .celebration-confetti span {
+    animation: none;
+    opacity: 0;
+  }
+}
