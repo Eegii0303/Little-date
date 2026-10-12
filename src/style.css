@@ -670,12 +670,6 @@ button:disabled {
   font-size: 2rem;
 }
 
-.panel.invitation {
-  position: relative;
-  overflow: hidden;
-}
-
-
 /* Little Date — time and date selection */
 select,
 .field select,
