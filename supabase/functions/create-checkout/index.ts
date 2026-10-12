@@ -9,7 +9,17 @@ const corsHeaders={
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:corsHeaders});
 const themes=new Set(["midnight","pastel","rose","minimal","starlight"]);
 const choices=new Set(["Flowers","Something sweet","A playlist","Just me"]);
-const activities=new Set(["Dessert","Stargazing","A drive","Not going home"]);
+const activities = new Set([
+  "Dessert",
+  "Stargazing",
+  "A drive",
+  "Not going home",
+  "Dinner",
+  "Coffee",
+  "Movie night",
+  "Long walk",
+  "Other"
+]);
 const emailRe=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 function validText(v:unknown,max:number,required=true){return typeof v==="string"&&v.trim().length<=max&&(!required||v.trim().length>0)}
 
@@ -23,7 +33,7 @@ Deno.serve(async req=>{
     if(typeof slug!=="string"||!/^[a-f0-9]{20}$/.test(slug))return json({error:"Invalid invitation identifier."},400);
     if(!["custom","surprise"].includes(mode))return json({error:"Invalid invitation type."},400);
     if(!validText(sender,60)||!validText(recipient,60)||!validText(creator_email,120)||!emailRe.test(creator_email)||typeof manage_token!=="string"||manage_token.length!==64||!themes.has(theme)||typeof no_dodge!=="boolean")return json({error:"Please check the invitation details."},400);
-    if(mode==="custom"&&(!validText(place,100)||!validText(date,10)||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date)||!validText(time,30)||!choices.has(bring)||!activities.has(activity)))return json({error:"Please complete the custom date details."},400);
+    if(mode==="custom"&&(!validText(place,100)||!validText(date,10)||!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date)||!validText(time,30)||!activities.has(activity)))return json({error:"Please complete the custom date details."},400);
 
     const siteUrl=Deno.env.get("SITE_URL"),apiKey=Deno.env.get("LEMONSQUEEZY_API_KEY"),storeId=Deno.env.get("LEMONSQUEEZY_STORE_ID"),variantId=Deno.env.get("LEMONSQUEEZY_VARIANT_ID");
     if(!siteUrl||!apiKey||!storeId||!variantId)return json({error:"Payment service is not configured yet."},503);
