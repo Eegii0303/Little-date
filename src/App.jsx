@@ -184,20 +184,22 @@ function nav(path){history.pushState({},'',path);setRoute(location.pathname);set
 function dodgeNo(mouseX,mouseY){
 
   const now=Date.now();
-
-
-
   if(now-lastDodgeRef.current<220)return;
-
-
-
   const button=noButtonRef.current;
-
   if(!button)return;
+  const container = button.closest('.panel.invitation');
 
+  if (!container) return;
 
+  const bounds = container.getBoundingClientRect();
+  const rect = button.getBoundingClientRect();
 
-  const rect=button.getBoundingClientRect();
+  const padding = 16;
+
+  const minX = bounds.left + padding - rect.left;
+  const maxX = bounds.right - padding - rect.right;
+  const minY = bounds.top + padding - rect.top;
+  const maxY = bounds.bottom - padding - rect.bottom;
 
   const centerX=rect.left+rect.width/2;
 
@@ -234,8 +236,8 @@ function dodgeNo(mouseX,mouseY){
   let x = (dx / length) * moveDistance;
   let y = (dy / length) * moveDistance;
 
-  x = Math.max(-130, Math.min(130, x));
-  y = Math.max(-80, Math.min(80, y));
+  x = Math.max(minX, Math.min(maxX, x));
+  y = Math.max(minY, Math.min(maxY, y));
 
 
 
@@ -543,7 +545,15 @@ async function copy(){
 <p><b>Status</b> {inv.status==='yes'?'YES 💗':inv.status==='no'?'NO':inv.status==='planning'?'YES — PLANNING':'WAITING'}</p>
 {inv.status==='yes'&&<><p><b>Date</b> {inv.response_date || inv.date || 'To be decided'}{' · '}{inv.response_time || inv.time || ''}</p><p><b>Where</b> {inv.response_place||inv.place||'To be decided'}</p></>}
 {inv.status==='planning'&&<p className="muted">They accepted and are choosing the date details now.</p>}
-{inv.status==='no'&&<p className="muted">They declined the invitation.</p>}
+{inv.status === 'no' && (
+  <div className="response-declined">
+    <div className="bear">💔</div>
+    <h2>Invitation declined</h2>
+    <p className="muted">
+      {inv.recipient} did not accept the invitation.
+    </p>
+  </div>
+)}
 </div></>}
 <button className="secondary" onClick={()=>nav('/')}>Create another invitation <Heart size={16}/></button>
 {msg&&<p className="notice">{msg}</p>}
@@ -709,26 +719,35 @@ async function copy(){
 
       {inv.sender} has a little question for you.</p>
 
-      {inv.mode==='custom'&&
+      {inv.mode === 'custom' && (
+        <div className="ticket">
+          <p>
+            <b>When</b>{' '}
+            {inv.date || 'Date to be confirmed'}
+            {' · '}
+            {inv.time}
+          </p>
 
-      <div className="ticket">
+          <p>
+            <b>Where</b>{' '}
+            {inv.place}
+          </p>
 
-      <p><b>When</b>{' '}{inv.date || 'Date to be confirmed'}{' · '}{inv.time}</p>
-
-      <p><b>Where</b> {inv.place}</p>
-
-      {mode === 'custom' && form.activity && (
-        <p>
-          <b>Date idea</b> {' '}
-          {form.activity === 'Dinner' && '🍽️ '}
-          {form.activity === 'Coffee' && '☕ '}
-          {form.activity === 'Movie night' && '🎬 '}
-          {form.activity === 'A long walk' && '🌷 '}
-          {form.activity}
-        </p>
+          {inv.then && (
+            <p>
+              <b>Date idea</b>{' '}
+              {{
+                Dinner: '🍽️',
+                Coffee: '☕',
+                'Movie night': '🎬',
+                'A long walk': '🌷',
+              }[inv.then] || '💗'}
+              {' '}
+              {inv.then}
+            </p>
+          )}
+        </div>
       )}
-
-    </div>}
 
       <p className="muted">There is only one right answer.</p>
 
