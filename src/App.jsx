@@ -315,7 +315,16 @@ async function saveInvitation(){
   setBusy(true);setMsg('');
   const slug=crypto.randomUUID().replaceAll('-','').slice(0,20);
   const manageToken=createManageToken();
-  const payload={slug,mode,sender:form.sender.trim(),recipient:form.recipient.trim(),creator_email:form.creator_email.trim(),manage_token:manageToken,place:mode==='custom'?form.place.trim():null,date:mode==='custom'?form.date:null,time:mode==='custom'?form.time:null,bring:mode==='custom'?form.bring:null,then: mode === 'custom' ? form.activity : null,theme:form.theme,no_dodge:noDodge,status:'pending',response_date:null,response_time:null,response_place:null,response_bring:null,response_then:null};
+  const payload={slug,mode,sender:form.sender.trim(),recipient:form.recipient.trim(),creator_email:form.creator_email.trim(),manage_token:manageToken,place:mode==='custom'?form.place.trim():null,date:mode==='custom'?form.date:null,time:mode==='custom'?form.time:null,bring:mode==='custom'?form.bring:null,
+    then: mode === 'custom' ? form.activity : null,
+    theme:form.theme,
+    no_dodge:noDodge,
+    status:'pending',
+    response_date:null,
+    response_time:null,
+    response_place:null,
+    response_bring:null,
+    response_then:null};
   try{
     localStorage.setItem('little-date-draft',JSON.stringify(payload));
     const {data,error}=await supabase.functions.invoke('create-checkout',{body:{invitation:payload}});
@@ -871,7 +880,8 @@ async function copy(){
         <input
           type="checkbox"
           checked={noDodge}
-          onChange={e=>setNoDodge(e.target.checked)}/>
+          onChange={e=>setNoDodge(e.target.checked)}
+          />
         Make the No button dodge (cannot be selected)
         </label><small>Recipients can still choose Yes. Use this as a playful effect, not to pressure someone.</small></div><div className="eyebrow">02 / PICK A THEME</div><div className="themegrid">{themes.map(t=><button key={t.id} onClick={()=>update('theme',t.id)} className={'themechoice swatch-'+t.id+(form.theme===t.id?' selected':'')}><span>{t.emoji}</span><b>{t.name}</b>{form.theme===t.id&&<Check size={15}/>}</button>)}</div><button className="wide" onClick={()=>{setMsg('');setStep(7)}}>Preview invitation <ExternalLink size={17}/></button>{msg&&<p className="notice">{msg}</p>}<p className="tiny">By creating a link, you agree to use it respectfully. Recipients can decline.</p></section><section className="panel"><div className="eyebrow">MADE FOR YOUR MOMENT</div><h2>Small details. Sweet memories.</h2><div className="feature"><span>💌</span><div><b>One easy link</b><p className="muted">Share your invitation by text or social media.</p></div></div><div className="feature"><span>💞</span><div><b>Made personal</b><p className="muted">Names, date plans and themes that feel like you.</p></div></div><div className="feature"><span>🔒</span><div><b>Private by link</b><p className="muted">Only people with the invitation link can open it.</p></div></div><button className="secondary wide" onClick={()=>nav('/pricing')}>Invitation pricing <Lock size={15}/></button></section></>}</main><footer>♡ LITTLE DATE <span>Made for moments that matter.</span></footer></div>}
 
