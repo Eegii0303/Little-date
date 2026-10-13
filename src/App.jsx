@@ -539,27 +539,114 @@ async function copy(){
 <div className="eyebrow">PRIVATE RESPONSE VIEW</div>
 <div className="bear">💌</div>
 {!inv?<><h1>Response not found</h1><p className="muted">This response link is invalid, expired, or the invitation is not ready yet.</p></>:<>
-<h1>{inv.status==='pending'?'Waiting for a response':inv.status==='planning'?'They said yes 💗':'Your invitation response'}</h1>
+<h1>
+  {inv.status === 'pending'
+    ? 'Waiting for a response'
+    : inv.status === 'planning'
+      ? 'They said YES! 💗'
+      : inv.status === 'yes'
+        ? 'They said YES! 🎉'
+        : inv.status === 'no'
+          ? 'Invitation declined 💔'
+          : 'Your invitation response'}
+</h1>
 <p className="muted">{inv.sender} → {inv.recipient}</p>
-<div className="ticket">
-<p><b>Status</b> {inv.status==='yes'?'YES 💗':inv.status==='no'?'NO':inv.status==='planning'?'YES — PLANNING':'WAITING'}</p>
-{inv.status==='yes'&&<><p><b>Date</b> {inv.response_date || inv.date || 'To be decided'}{' · '}{inv.response_time || inv.time || ''}</p><p><b>Where</b> {inv.response_place||inv.place||'To be decided'}</p></>}
-{inv.status==='planning'&&<p className="muted">They accepted and are choosing the date details now.</p>}
-{inv.status === 'no' && (
-  <div className="response-declined">
-    <div className="bear">💔</div>
-    <h2>Invitation declined</h2>
-    <p className="muted">
-      {inv.recipient} did not accept the invitation.
-    </p>
-  </div>
-)}
+
+<div
+  className={`response-card ${
+    inv.status === 'yes' || inv.status === 'planning'
+      ? 'response-success'
+      : inv.status === 'no'
+        ? 'response-declined'
+        : 'response-pending'
+  }`}
+>
+  {(inv.status === 'yes' || inv.status === 'planning') && (
+    <>
+      <div className="celebration-confetti" aria-hidden="true">
+        {Array.from({ length: 24 }, (_, i) => (
+          <span key={i} style={{ '--i': i }}>
+            {['🎉', '💗', '✨', '💕'][i % 4]}
+          </span>
+        ))}
+      </div>
+      <div className="response-emoji">🎉💗🥳</div>
+      <h2>
+        {inv.status === 'planning'
+          ? 'They said YES!'
+          : 'Congratulations!'}
+      </h2>
+      <p>
+        {inv.recipient} accepted your invitation!
+      </p>
+      {inv.status === 'planning' && (
+        <p className="muted">
+          They are choosing the date details now.
+        </p>
+      )}
+    </>
+  )}
+
+  {inv.status === 'no' && (
+    <>
+      <div className="response-emoji">🥺💔</div>
+      <h2>Invitation declined</h2>
+      <p>
+        {inv.recipient} did not accept the invitation.
+      </p>
+      <p className="muted">
+        Don't lose heart. 💗
+      </p>
+    </>
+  )}
+
+  {inv.status === 'pending' && (
+    <>
+      <div className="response-emoji">💌</div>
+      <h2>Waiting for a response</h2>
+      <p>
+        Your invitation is waiting for {inv.recipient}.
+      </p>
+    </>
+  )}
+
+  {inv.status === 'yes' && (
+    <>
+      <p>
+        <b>Date</b>{' '}
+        {inv.response_date || inv.date || 'To be decided'}
+        {' · '}
+        {inv.response_time || inv.time || ''}
+      </p>
+      <p>
+        <b>Where</b>{' '}
+        {inv.response_place || inv.place || 'To be decided'}
+      </p>
+    </>
+  )}
 </div></>}
 <button className="secondary" onClick={()=>nav('/')}>Create another invitation <Heart size={16}/></button>
 {msg&&<p className="notice">{msg}</p>}
 </section>:isInvite?<section className="panel invitation">
 
-        <div className="progress">{[0,1,2,3,4,5].map((n)=><i className={(inv?.status==='yes'||inv?.status==='no'||inv?.status==='planning'||step>n)?'on':''} key={n}/>)}</div>{!inv?<>
+       
+        {inv.status !== 'planning' && (
+          <div className="progress">
+            {[0, 1, 2, 3, 4, 5].map((n) => (
+              <i
+                className={
+                  inv?.status === 'yes' ||
+                  inv?.status === 'no' ||
+                  step > n
+                    ? 'on'
+                    : ''
+                }
+                key={n}
+              />
+            ))}
+          </div>
+        )}
+          {!inv?<>
 
         <div className="bear">💌</div>
 
@@ -585,21 +672,34 @@ async function copy(){
 
         <div className="ticket">
 
-        <div className="eyebrow">DATE PASS · ADMIT TWO</div>
+        <div className="eyebrow date-pass-label">DATE PASS · ADMIT TWO</div>
 
         <p><b>For</b> {inv.sender} & {inv.recipient}</p><p><b>When</b> 
 
       {inv.response_date||inv.date||'To be decided'} 
 
-      {inv.response_time||inv.time||''}</p><p><b>Where</b> 
+      {inv.response_time||inv.time||''}</p><p><b>OUR PlAN</b> 
 
-      {inv.response_place || inv.place || 'To be decided'}</p></div>
+      {inv.response_place || inv.place || 'To be decided'}
+      </p>
 
-      <button type="button" onClick={addToCalendar}>
-        <CalendarDays size={18}/> Add to calendar
+      {inv.then && (
+        <p>
+          <b>Plan</b>{' '}
+          {{
+            Dinner: '🍽️',
+            Coffee: '☕',
+            'Movie night': '🎬',
+            'A long walk': '🌷',
+          }[inv.then] || '💗'}{' '}
+          {inv.then}
+        </p>
+      )}
+      </div>
+
+      <button type="button" onClick={addToCalendar}>
+        <CalendarDays size={18} /> Add to calendar
       </button>
-
-      {inv.then && (<p><b>Plan</b> {inv.then}</p>)}
 
         {msg&&<p className="notice">{msg}</p>}</>:inv.status==='no'?<>
 
@@ -639,7 +739,7 @@ async function copy(){
 
           <label>Choose a time</label>
 
-          <select value={planTime} 
+          <select className="date-input" value={planTime} 
 
           onChange={e=>setPlanTime(e.target.value)}>
 
@@ -703,7 +803,10 @@ async function copy(){
 
       <ArrowLeft size={16}/> Back</button>}
 
-      <button onClick={savePlan} disabled={busy}>
+      <button
+        className={planStep === 3 ? 'confirm-date-plan' : 'date-step-continue'}
+        onClick={savePlan}
+        disabled={busy}>
 
       {planStep===3?'Confirm date plan':'Continue'} 
 
@@ -734,16 +837,13 @@ async function copy(){
           </p>
 
           {inv.then && (
-            <p>
+            <p className="date-idea-row">
               <b>Date idea</b>{' '}
-              {{
-                Dinner: '🍽️',
-                Coffee: '☕',
-                'Movie night': '🎬',
-                'A long walk': '🌷',
-              }[inv.then] || '💗'}
-              {' '}
-              {inv.then}
+              {form.activity === 'Dinner' && '🍽️ '}
+              {form.activity === 'Coffee' && '☕ '}
+              {form.activity === 'Movie night' && '🎬 '}
+              {form.activity === 'A long walk' && '🌷 '}
+              {form.activity}
             </p>
           )}
         </div>

@@ -440,7 +440,6 @@ button:disabled {
 }
 
 .actions {
-  overflow: hidden;
   padding: 8px 4px;
   flex-wrap: wrap;
   align-items: center;
@@ -700,4 +699,128 @@ select option {
   padding: 12px;
   color: #ffeaf3;
   background: #291523;
+}
+/* Date Pass label only */
+.date-pass-label {
+  color: #b83268;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+/* Private response page only */
+.response-card {
+  position: relative;
+  overflow: hidden;
+  padding: 28px 22px;
+  margin: 20px 0;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.response-card h2 {
+  margin: 12px 0;
+}
+
+.response-emoji {
+  font-size: 2.8rem;
+  margin-bottom: 12px;
+}
+
+.response-success {
+  background: linear-gradient(145deg, #fff0f6, #ffe3ed);
+  border: 1px solid #ff9ec5;
+  color: #8c2454;
+}
+
+.response-declined {
+  background: linear-gradient(145deg, #f7edf0, #eee3e8);
+  border: 1px solid #d9b9c5;
+  color: #76505f;
+}
+
+.response-pending {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 180, 210, 0.25);
+  color: inherit;
+}
+
+.response-card .muted {
+  color: inherit;
+  opacity: 0.78;
+}
+
+/* Only the Date Idea row */
+.ticket p.date-idea-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ticket p.date-idea-row b {
+  flex: 0 0 76px;
+  white-space: nowrap;
+}
+
+/* Only the time selection field */
+.date-time-field {
+  box-sizing: border-box;
+  width: 100%;
+  background-color: #100b15;
+  color: #fff0f7;
+  border: 1px solid #342a3a;
+  border-radius: 18px;
+  color-scheme: dark;
+}
+
+/* Only the date-step Continue button */
+.date-step-continue {
+  box-sizing: border-box;
+  min-height: 58px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff7eb3, #f45197);
+  color: #351126;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.date-step-continue:hover:not(:disabled) {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.date-step-continue:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Confirm date plan only */
+button.confirm-date-plan {
+  appearance: none;
+  box-sizing: border-box;
+  min-height: 58px;
+  padding: 14px 24px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff7eb3, #f45197);
+  color: #351126;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(244, 81, 151, 0.18);
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+button.confirm-date-plan:hover:not(:disabled) {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+button.confirm-date-plan:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
